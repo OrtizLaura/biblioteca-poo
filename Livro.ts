@@ -54,6 +54,9 @@ export class Livro {
         this._isbn = isbn;
     }
 
+    /*
+    * Método que cadastra um novo livro
+    */
     static adicionarLivro(){
         console.log("\n =================================");
         let titulo = prompt("Qual o título do livro? ");
@@ -72,6 +75,11 @@ export class Livro {
         Livro.salvarDados();
     }
 
+    /*
+    * Método que lista todos os livros cadastrados ou 
+    * somente os livros emprestados, fazendo esse controle
+    * por um parâmetro passado para o método
+    */
     static listar(emprestimo = false) {
         if (livros.length === 0) {
             console.log("=============== \n");
@@ -103,6 +111,9 @@ export class Livro {
         console.log('# =================================');
     }
 
+    /*
+    * Método que atualiza os dados dos livros
+    */
     static atualizar() {
         Livro.listar();
         
@@ -149,6 +160,9 @@ export class Livro {
         console.log("========= ");
     }
 
+    /*
+    * Método que remove um livro
+    */
     static remover() {
         Livro.listar();
 
@@ -158,6 +172,7 @@ export class Livro {
             return;
         }
 
+        //- serve para remover uma posição do array
         livros.splice(livro_deletar - 1, 1)
 
         Livro.salvarDados();
@@ -167,22 +182,35 @@ export class Livro {
         console.log(" ========= ");
     }
 
+    /*
+    * Método para salvar os dados no arquivo
+    */
     static salvarDados() {
         const arquivo = "livros.txt";
 
+        // transforma os dados do array de livros em JSON para salvar no arquivo de texto
         const data = JSON.stringify(livros, (key, value) => {
             return value;
         }, 2);
+
+        // escreve no arquivo texto
         fs.writeFileSync(arquivo, data);
     }
     
+    /*
+    * Método para recuperar os dados do arquivo
+    */
     static recuperarDados() {
         const arquivo = "livros.txt";
 
+        // verifica se o arquivo existe
         if (fs.existsSync(arquivo)) {
+            // le os dados de dentro do arquivo
             const dados = fs.readFileSync(arquivo, 'utf-8');
+            // transforma os dados de string para um objeto
             const livrosArquivo = JSON.parse(dados);
 
+            // transforma o objeto e salva em array novamente
             livrosArquivo.map((l: any) => {
                 let objeto = new Livro(l._titulo, l._autor, l._ano, l._editora, l._isbn);
                 livros.push(objeto);

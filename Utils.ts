@@ -1,5 +1,8 @@
 export class Utils
 {
+    /*
+    * Método para formatar a data para exibição dd/mm/aaaa
+    */
     static formatarData(data: Date): string {
         let dataObjeto = new Date(data);
 
@@ -10,6 +13,9 @@ export class Utils
         return `${dia.toString().padStart(2, '0')}/${mes.toString().padStart(2, '0')}/${ano}`;
     }
 
+    /*
+    * Faz a verificação se o formato da data é válido
+    */
     static verificaDataValida(data: string): boolean {
         const [day, month, year] = data.split('/').map(Number);
         const dataFormatada = new Date(year, month - 1, day);

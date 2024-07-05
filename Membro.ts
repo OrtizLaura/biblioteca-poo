@@ -6,10 +6,15 @@ import fs from 'fs';
 
 const prompt = promptSync();
 
+/*
+* A classe membro estende a classe pessoa, e 
+* herda os atributos da classe pessoa
+*/
 export class Membro extends Pessoa{
-    protected _numeroMatricula: string;
+    protected _numeroMatricula: string; 
 
     constructor(nome: string, cpf: string, nascimento: Date, telefone: number, endereco: string, numeroMatricula: string) {
+        // enviando os dados para a classe pessoa
         super(nome, cpf, nascimento, telefone, endereco);
         this._numeroMatricula = numeroMatricula;
     }
@@ -21,6 +26,9 @@ export class Membro extends Pessoa{
         this._numeroMatricula = numeroMatricula;
     }
     
+    /*
+    * Verifica se o formato da data de nascimento é válido
+    */
     static verificaNascimento(dataNasc: string): boolean {
         const [day, month, year] = dataNasc.split('/').map(Number);
         const nascimento = new Date(year, month - 1, day);
@@ -33,6 +41,9 @@ export class Membro extends Pessoa{
         }
     }
 
+    /*
+    * Método para adicionar novo membro
+    */
     static adicionarMembro() {
         console.log("\n =================================");
         let nome = prompt("Qual o nome do membro? ");
@@ -64,6 +75,9 @@ export class Membro extends Pessoa{
         Membro.salvarDados();
     }
 
+    /*
+    * Método para listar os dados dos membros
+    */
     static listarCadastro() {
         if (membros.length === 0) {
             console.log("=============== \n");
@@ -84,6 +98,9 @@ export class Membro extends Pessoa{
         console.log('# =================================');
     }
 
+    /*
+    * Método para atualizar as informações dos membros
+    */
     static atualizarInformacoes() {
         Membro.listarCadastro();
         
@@ -102,6 +119,7 @@ export class Membro extends Pessoa{
         let nome = prompt("Qual o novo nome do membro? ");
         let cpf = prompt("Qual o novo CPF do membro? ");
 
+        // Enquanto o formato da data de nascimento estiver errada, é pedido novamente 
         do {
             nascimentoString = prompt("Qual a nova data de nascimento do membro? (DD/MM/YYYY) ");
             
@@ -149,6 +167,9 @@ export class Membro extends Pessoa{
         console.log("========= ");
     }
 
+    /*
+    * Método para remover membro
+    */
     static removerMembro() {
         Membro.listarCadastro();
 
@@ -166,25 +187,36 @@ export class Membro extends Pessoa{
         console.log("========= ");
     }
 
+    /*
+    * Método para salvar os dados no arquivo
+    */
     static salvarDados() {
         const arquivo = "membros.txt";
 
+        // transforma os dados do array de livros em JSON para salvar no arquivo de texto
         const data = JSON.stringify(membros, (key, value) => {
             return value;
         }, 2);
+        // escreve no arquivo texto
         fs.writeFileSync(arquivo, data);
     }
     
+    /*
+    * Método para recuperar os dados do arquivo
+    */
     static recuperarDados() {
         const arquivo = "membros.txt";
 
+        // verifica se o arquivo existe
         if (fs.existsSync(arquivo)) {
+            // le os dados de dentro do arquivo
             const dados = fs.readFileSync(arquivo, 'utf-8');
+            // transforma os dados de string para um objeto
             const membrosArquivo = JSON.parse(dados);
 
+            // transforma o objeto e salva em array novamente
             membrosArquivo.map((m: any) => {
                 let objeto = new Membro(m._nome, m._cpf, new Date(m._nascimento), m._telefone, m._endereco, m._numeroMatricula);
-
                 membros.push(objeto);
             });
         }

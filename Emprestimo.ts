@@ -44,6 +44,9 @@ export class Emprestimo {
         this._dataDevolucao = dataDevolucao
     }
 
+    /*
+    * Método para fazer um emprestimo de um livro para um membro
+    */
     static emprestar() {
         Membro.listarCadastro();
         const opcaoMembro : number = Number(prompt("Para qual membro será feito o empréstimo? "));
@@ -53,15 +56,16 @@ export class Emprestimo {
             return;
         }
 
-        Livro.listar(true);
 
-        if (Emprestimo.verificaExisteLivroParaEmprestimo() == true) {
+        // Verifica se existe algum livro para emprestimo
+        if (Emprestimo.verificaExisteLivroParaEmprestimo() == false) {
             console.log("=============== \n");
             console.log("Não há nenhum livro para empréstimo! \n");
             console.log("=============== \n");
             return;
         }
 
+        Livro.listar(true);
 
         const opcaoLivro : number = Number(prompt("Qual livro será feito o empréstimo? "));
         if (opcaoLivro > (livros.length + 1)) {
@@ -77,6 +81,7 @@ export class Emprestimo {
         console.log(" ========= ");
     }
 
+    // Lista todos os livros emprestados ou todos os livros
     static listar(escopo: string = "todos") {
         if (emprestimos.length === 0) {
             console.log("=============== \n");
@@ -107,6 +112,7 @@ export class Emprestimo {
         console.log('# =================================');
     }
 
+    // Devolve um livro 
     static devolver() {
         Emprestimo.listar();
 
@@ -126,22 +132,34 @@ export class Emprestimo {
         console.log(" ========= ");
     }
 
+    /*
+    * Método para salvar os dados no arquivo
+    */
     static salvarDados() {
         const arquivo = "emprestimos.txt";
 
+        // transforma os dados do array de livros em JSON para salvar no arquivo de texto
         const data = JSON.stringify(emprestimos, (key, value) => {
             return value;
         }, 2);
+        // escreve no arquivo texto
         fs.writeFileSync(arquivo, data);
     }
     
+    /*
+    * Método para recuperar os dados do arquivo
+    */
     static recuperarDados() {
         const arquivo = "emprestimos.txt";
 
+        // verifica se o arquivo existe
         if (fs.existsSync(arquivo)) {
+            // le os dados de dentro do arquivo
             const dados = fs.readFileSync(arquivo, 'utf-8');
+            // transforma os dados de string para um objeto
             const emprestimosArquivo = JSON.parse(dados);
 
+            // transforma o objeto e salva em array novamente
             emprestimosArquivo.map((obj: any) => {
                 const livro = new Livro(obj._livro._titulo, obj._livro._autor, obj._livro._ano, obj._livro._editora, obj._livro._isbn);
                 const membro = new Membro(obj._membro._nome, obj._membro._cpf, obj._membro._nascimento, obj._membro._telefone, obj._membro._endereco, obj._membro._numeroMatricula)
@@ -152,6 +170,9 @@ export class Emprestimo {
         }
     }
 
+    /*
+    * Faz a verificação se existe algum livro disponível para emprestimo
+    */
     static verificaExisteLivroParaEmprestimo() {
         let nenhumLivro = true;
 
